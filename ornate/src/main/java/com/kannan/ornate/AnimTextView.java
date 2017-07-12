@@ -3,17 +3,14 @@ package com.kannan.ornate;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.AppCompatTextView;
+import android.text.Layout;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
-import static android.R.attr.path;
 import static com.kannan.ornate.AnimTextView.Mode.A;
 
 /**
@@ -45,7 +42,7 @@ public class AnimTextView extends TextView {
     private Mode mode = A;
     private Rect maskRect;
     private Path maskPath;
-    private float revealFactor;
+    private float mProgress;
     private int width = -1;
     private int height = -1;
 
@@ -67,7 +64,7 @@ public class AnimTextView extends TextView {
     private void init() {
         maskRect = new Rect();
         maskPath = new Path();
-        revealFactor = 1.0f;
+        mProgress = 1.0f;
     }
 
     @Override
@@ -82,7 +79,16 @@ public class AnimTextView extends TextView {
         canvas.clipPath(maskPath);
 //        canvas.drawText(getText().toString(),
 //                getLeft(), getBaseline(), getPaint());
-        super.onDraw(canvas);
+        Layout layout = this.getLayout();
+        for (int i = 0; i < layout.getLineCount(); i += 1) {
+            int lineStart = layout.getLineStart(i);
+            int lineEnd = layout.getLineEnd(i);
+            float lineLeft = layout.getLineLeft(i);
+            float lineBaseline = layout.getLineBaseline(i);
+            String lineText = getText().subSequence(lineStart, lineEnd).toString();
+            canvas.drawText(String.valueOf(lineText), lineLeft, lineBaseline, getPaint());
+        }
+//        super.onDraw(canvas);
 
     }
 
@@ -91,97 +97,103 @@ public class AnimTextView extends TextView {
         switch (mode) {
             case A:
                 maskPath.moveTo(0, 0);
-                maskPath.lineTo(width * revealFactor, 0);
-                maskPath.lineTo(width * revealFactor, height);
+                maskPath.lineTo(width * mProgress, 0);
+                maskPath.lineTo(width * mProgress, height);
                 maskPath.lineTo(0, height);
                 maskPath.close();
                 break;
             case B:
-                maskPath.moveTo(width - (width * revealFactor), 0);
+                maskPath.moveTo(width - (width * mProgress), 0);
                 maskPath.lineTo(width, 0);
                 maskPath.lineTo(width, height);
-                maskPath.lineTo(width - (width * revealFactor), height);
+                maskPath.lineTo(width - (width * mProgress), height);
                 maskPath.close();
                 break;
             case C:
                 maskPath.moveTo(0, 0);
                 maskPath.lineTo(width, 0);
-                maskPath.lineTo(width, height * revealFactor);
-                maskPath.lineTo(0, height * revealFactor);
+                maskPath.lineTo(width, height * mProgress);
+                maskPath.lineTo(0, height * mProgress);
                 maskPath.close();
                 break;
             case D:
-                maskPath.moveTo(0, height - (height * revealFactor));
-                maskPath.lineTo(width, height - (height * revealFactor));
+                maskPath.moveTo(0, height - (height * mProgress));
+                maskPath.lineTo(width, height - (height * mProgress));
                 maskPath.lineTo(width, height);
                 maskPath.lineTo(0, height);
                 maskPath.close();
                 break;
             case E:
                 maskPath.moveTo(0, 0);
-                maskPath.lineTo(width * revealFactor * 2, 0);
-                maskPath.lineTo(0, height * revealFactor * 2);
+                maskPath.lineTo(width * mProgress * 2, 0);
+                maskPath.lineTo(0, height * mProgress * 2);
                 maskPath.close();
                 break;
             case F:
-                maskPath.moveTo(width - (width * revealFactor * 2), 0);
+                maskPath.moveTo(width - (width * mProgress * 2), 0);
                 maskPath.lineTo(width, 0);
-                maskPath.lineTo(width, height * revealFactor * 2);
+                maskPath.lineTo(width, height * mProgress * 2);
                 maskPath.close();
                 break;
             case G:
-                maskPath.moveTo(width, height - (height * revealFactor * 2));
+                maskPath.moveTo(width, height - (height * mProgress * 2));
                 maskPath.lineTo(width, height);
-                maskPath.lineTo(width - (width * revealFactor * 2), height);
+                maskPath.lineTo(width - (width * mProgress * 2), height);
                 maskPath.close();
                 break;
             case H:
-                maskPath.moveTo(0, height - (height * revealFactor *2));
-                maskPath.lineTo(width * revealFactor * 2, height);
+                maskPath.moveTo(0, height - (height * mProgress *2));
+                maskPath.lineTo(width * mProgress * 2, height);
                 maskPath.lineTo(0, height);
                 maskPath.close();
                 break;
             case I:
-                maskPath.moveTo((width / 2) - (width * revealFactor / 2), 0);
-                maskPath.lineTo((width / 2) + (width * revealFactor / 2), 0);
-                maskPath.lineTo((width / 2) + (width * revealFactor / 2), height);
-                maskPath.lineTo((width / 2) - (width * revealFactor / 2), height);
+                maskPath.moveTo((width / 2) - (width * mProgress / 2), 0);
+                maskPath.lineTo((width / 2) + (width * mProgress / 2), 0);
+                maskPath.lineTo((width / 2) + (width * mProgress / 2), height);
+                maskPath.lineTo((width / 2) - (width * mProgress / 2), height);
                 maskPath.close();
                 break;
             case J:
-                maskPath.moveTo(0, (height / 2) - (height * revealFactor / 2));
-                maskPath.lineTo(width, (height / 2) - (height * revealFactor / 2));
-                maskPath.lineTo(width, (height / 2) + (height * revealFactor / 2));
-                maskPath.lineTo(0, (height / 2) + (height * revealFactor / 2));
+                maskPath.moveTo(0, (height / 2) - (height * mProgress / 2));
+                maskPath.lineTo(width, (height / 2) - (height * mProgress / 2));
+                maskPath.lineTo(width, (height / 2) + (height * mProgress / 2));
+                maskPath.lineTo(0, (height / 2) + (height * mProgress / 2));
                 maskPath.close();
                 break;
             case K:
                 maskPath.moveTo(0, 0);
-                maskPath.lineTo(width * revealFactor, 0);
-                maskPath.lineTo(width, height - (height * revealFactor));
+                maskPath.lineTo(width * mProgress, 0);
+                maskPath.lineTo(width, height - (height * mProgress));
                 maskPath.lineTo(width, height);
-                maskPath.lineTo(width - (width * revealFactor), height);
-                maskPath.lineTo(0, height * revealFactor);
+                maskPath.lineTo(width - (width * mProgress), height);
+                maskPath.lineTo(0, height * mProgress);
                 maskPath.close();
                 break;
             case L:
-                maskPath.moveTo(width - (width * revealFactor), 0);
+                maskPath.moveTo(width - (width * mProgress), 0);
                 maskPath.lineTo(width, 0);
-                maskPath.lineTo(width, height * revealFactor);
-                maskPath.lineTo(width * revealFactor, height);
+                maskPath.lineTo(width, height * mProgress);
+                maskPath.lineTo(width * mProgress, height);
                 maskPath.lineTo(0, height);
-                maskPath.lineTo(0, height - (height * revealFactor));
+                maskPath.lineTo(0, height - (height * mProgress));
                 maskPath.close();
                 break;
             case M:
-                maskPath.moveTo((width / 2) - (width * revealFactor / 2), (height / 2) - (height * revealFactor / 2));
-                maskPath.lineTo((width / 2) + (width * revealFactor / 2), (height / 2) - (height * revealFactor / 2));
-                maskPath.lineTo((width / 2) + (width * revealFactor / 2), (height / 2) + (height * revealFactor / 2));
-                maskPath.lineTo((width / 2) - (width * revealFactor / 2), (height / 2) + (height * revealFactor / 2));
+                maskPath.moveTo((width / 2) - (width * mProgress / 2), (height / 2) - (height * mProgress / 2));
+                maskPath.lineTo((width / 2) + (width * mProgress / 2), (height / 2) - (height * mProgress / 2));
+                maskPath.lineTo((width / 2) + (width * mProgress / 2), (height / 2) + (height * mProgress / 2));
+                maskPath.lineTo((width / 2) - (width * mProgress / 2), (height / 2) + (height * mProgress / 2));
                 maskPath.close();
                 break;
 
         }
+    }
+
+    public RectF getBoundingRect() {
+        RectF bound = new RectF();
+        maskPath.computeBounds(bound, true);
+        return bound;
     }
 
     public void setMode(Mode mode) {
@@ -189,13 +201,13 @@ public class AnimTextView extends TextView {
         invalidate();
     }
 
-    public void setRevealFactor(float factor) {
-        revealFactor = factor;
+    public void setProgress(float progress) {
+        mProgress = progress;
         updateMask();
         invalidate();
     }
 
-    public float getRevealFactor() {
-        return revealFactor;
+    public float getProgress() {
+        return mProgress;
     }
 }
