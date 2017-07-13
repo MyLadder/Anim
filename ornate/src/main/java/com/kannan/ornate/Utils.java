@@ -14,4 +14,9 @@ public class Utils {
                 dp, context.getResources().getDisplayMetrics());
     }
 
+
+    public static float normalize(float value, float min, float max) {
+        return (value - min) / (max - min);
+    }
+
 }

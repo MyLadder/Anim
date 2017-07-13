@@ -70,8 +70,12 @@ public class AnimTextView extends TextView {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
             width = getMeasuredWidth();
             height = getMeasuredHeight();
+
+//        width += getPaint().getFontMetrics().descent;
+//        setMeasuredDimension(width, height);
     }
 
     @Override
@@ -79,21 +83,23 @@ public class AnimTextView extends TextView {
         canvas.clipPath(maskPath);
 //        canvas.drawText(getText().toString(),
 //                getLeft(), getBaseline(), getPaint());
-        Layout layout = this.getLayout();
-        for (int i = 0; i < layout.getLineCount(); i += 1) {
-            int lineStart = layout.getLineStart(i);
-            int lineEnd = layout.getLineEnd(i);
-            float lineLeft = layout.getLineLeft(i);
-            float lineBaseline = layout.getLineBaseline(i);
-            String lineText = getText().subSequence(lineStart, lineEnd).toString();
-            canvas.drawText(String.valueOf(lineText), lineLeft, lineBaseline, getPaint());
-        }
-//        super.onDraw(canvas);
+//        Layout layout = this.getLayout();
+//        for (int i = 0; i < layout.getLineCount(); i += 1) {
+//            int lineStart = layout.getLineStart(i);
+//            int lineEnd = layout.getLineEnd(i);
+//            float lineLeft = layout.getLineLeft(i);
+//            float lineBaseline = layout.getLineBaseline(i);
+//            String lineText = getText().subSequence(lineStart, lineEnd).toString();
+//            canvas.drawText(String.valueOf(lineText), lineLeft, lineBaseline, getPaint());
+//        }
+        super.onDraw(canvas);
 
     }
 
 
     private void updateMask() {
+
+        maskPath.reset();
         switch (mode) {
             case A:
                 maskPath.moveTo(0, 0);

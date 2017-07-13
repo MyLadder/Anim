@@ -2,16 +2,18 @@ package com.kannan.ornate;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Build;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 /**
  * Created by kannan on 12/7/17.
  */
 
-public class BoxTextView extends RelativeLayout {
+public class BoxTextView extends FrameLayout {
 
     private Context mContext;
 
@@ -26,6 +28,8 @@ public class BoxTextView extends RelativeLayout {
 
 
     private float mProgress = 1.0f;
+
+    private AnimationCoordinator mAnimCoord;
 
 
     public BoxTextView(Context context) {
@@ -52,51 +56,95 @@ public class BoxTextView extends RelativeLayout {
                         ViewGroup.LayoutParams.WRAP_CONTENT
                 )
         );
-        setBackgroundColor(Color.BLUE);
+//        setBackgroundColor(Color.BLUE);
+//        setOrientation();
 
         mBoxView = new BoxView(mContext);           // send attrs down ?
-        RelativeLayout.LayoutParams boxLP = new RelativeLayout.LayoutParams(
+        LayoutParams boxLP = new LayoutParams(
 
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
+                ViewGroup.LayoutParams.FILL_PARENT,
+                ViewGroup.LayoutParams.FILL_PARENT
 //                200,200
         );
-        boxLP.addRule(ALIGN_PARENT_LEFT, TRUE);
-        boxLP.addRule(ALIGN_PARENT_TOP, TRUE);
-        boxLP.addRule(ALIGN_PARENT_RIGHT, TRUE);
-        boxLP.addRule(ALIGN_PARENT_BOTTOM, TRUE);
+//        boxLP.addRule(ALIGN_PARENT_LEFT, TRUE);
+//        boxLP.addRule(ALIGN_PARENT_TOP, TRUE);
+//        boxLP.addRule(ALIGN_PARENT_RIGHT, TRUE);
+//        boxLP.addRule(ALIGN_PARENT_BOTTOM, TRUE);
         mBoxView.setLayoutParams(boxLP);
-        mBoxView.setBackgroundColor(Color.YELLOW);
+//        mBoxView.setBackgroundColor(Color.YELLOW);
 
         mTextView = new AnimTextView(mContext);
-        RelativeLayout.LayoutParams textLP = new RelativeLayout.LayoutParams(
+        LayoutParams textLP = new LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        textLP.addRule(ALIGN_PARENT_LEFT, TRUE);
-        textLP.addRule(ALIGN_PARENT_TOP, TRUE);
+//        textLP.addRule(ALIGN_PARENT_LEFT, TRUE);
+//        textLP.addRule(ALIGN_PARENT_TOP, TRUE);
 //        textLP.addRule(ALIGN_PARENT_RIGHT, TRUE);
 //        textLP.addRule(ALIGN_PARENT_BOTTOM, TRUE);
         textLP.setMargins(mTextMargin, mTextMargin, mTextMargin, mTextMargin);
+        textLP.gravity = Gravity.CENTER;
         mTextView.setLayoutParams(textLP);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            mTextView.setTextAlignment(TEXT_ALIGNMENT_CENTER);
+        }
         mTextView.setBackgroundColor(Color.TRANSPARENT);
-        mTextView.setMode(AnimTextView.Mode.J);
-        mTextView.setText("ORNATE");
+        mTextView.setMode(AnimTextView.Mode.L);
+        mTextView.setText(" ORNATE ");
         mTextView.setTextAppearance(mContext, R.style.main_title_left);
 
         this.addView(mBoxView);
         this.addView(mTextView);
+        mBoxView.bringToFront();
 
         mBoxView.setRectSource(mTextView);
+        mAnimCoord = new AnimCoord_14(mTextView, mBoxView, mLineWidth);
 
     }
 
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+//        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int widthSpecSize = MeasureSpec.getSize(widthMeasureSpec);
+        int heightSpecSize = MeasureSpec.getSize(heightMeasureSpec);
+
+        int textWidthMeasureSpec = MeasureSpec.makeMeasureSpec(widthSpecSize, MeasureSpec.UNSPECIFIED);
+        int textHeightMeasureSpec = MeasureSpec.makeMeasureSpec(heightSpecSize, MeasureSpec.UNSPECIFIED);
+        measureChild(mTextView, textWidthMeasureSpec, textHeightMeasureSpec);
+
+        int requiredWidth = mTextView.getMeasuredWidth() + getPaddingLeft() + getPaddingRight() + 2 * mTextMargin;
+        int requiredHeight = mTextView.getMeasuredHeight() + getPaddingTop() + getPaddingBottom() + 2 * mTextMargin;
+
+        measureChild(mBoxView, MeasureSpec.makeMeasureSpec(requiredWidth, MeasureSpec.EXACTLY)
+        ,MeasureSpec.makeMeasureSpec(requiredHeight, MeasureSpec.EXACTLY));
+
+        setMeasuredDimension(requiredWidth, requiredHeight);
+
+    }
+
+    public void setAnimCooard(AnimationCoordinator coord){
+        mAnimCoord = coord;
+    }
 
     public void setProgress(float progress) {
         mProgress = progress;
+        mAnimCoord.animate(progress);
 
-        mTextView.setProgress(progress);
-        mBoxView.setProgress(progress);
     }
+
+    public AnimTextView getTextView() {
+        return mTextView;
+    }
+
+    public BoxView getBoxView() {
+        return mBoxView;
+    }
+
+
+    public float getLineWidth() {
+        return mLineWidth;
+    }
+
 
 }
