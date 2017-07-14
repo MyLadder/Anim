@@ -15,6 +15,7 @@ import com.kannan.ornate.AnimCoord_12;
 import com.kannan.ornate.AnimCoord_13;
 import com.kannan.ornate.AnimCoord_14;
 import com.kannan.ornate.AnimCoord_2;
+import com.kannan.ornate.AnimCoord_2_1;
 import com.kannan.ornate.AnimCoord_3;
 import com.kannan.ornate.AnimCoord_4;
 import com.kannan.ornate.AnimCoord_5;
@@ -89,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         {
             BoxTextView atv = new BoxTextView(getApplicationContext());
             atv.setProgress(1.0f);
-            atv.setAnimCooard(new AnimCoord_1(atv.getTextView(), atv.getBoxView(), atv.getLineWidth()));
+            atv.setAnimCooard(new AnimCoord_2_1(atv.getTextView(), atv.getBoxView(), atv.getLineWidth()));
             root.addView(atv);
             al.add(
                     ObjectAnimator.ofFloat(atv, "progress", 0.0f, 1.0f).setDuration(5000)

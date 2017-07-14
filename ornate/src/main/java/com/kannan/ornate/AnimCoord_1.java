@@ -14,8 +14,6 @@ public class AnimCoord_1 implements AnimationCoordinator {
     private BoxView mBoxView;
     private float mLineWidth;
 
-    public AnimCoord_1() {}
-
     public AnimCoord_1(AnimTextView textView, BoxView boxView, float lineWidth) {
         mTextView = textView;
         mBoxView = boxView;

@@ -7,6 +7,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -25,11 +26,20 @@ public class BoxView extends View {
     private Line mLineRight;
     private Line mLineBottom;
 
+    private Rectangle mRectangle;
+
     private boolean mShowLineLeft;
     private boolean mShowLineTop;
     private boolean mShowLineRight;
     private boolean mShowLineBottom;
 
+    public enum Mode {
+        MODE_LINES,
+
+        MODE_BOX;
+    }
+
+    private Mode mMode;
 
     private float mProgress;
 
@@ -57,12 +67,15 @@ public class BoxView extends View {
         mLineRight = new Line(Line.ORIENT_VERTICAL);
         mLineBottom = new Line(Line.ORIENT_HORIZONTAL);
 
+        mRectangle = new Rectangle(Rectangle.MODE_FILL_STROKE);
+
 //        mShowLineLeft = true;
 //        mShowLineTop = true;
 //        mShowLineRight = true;
 //        mShow
 
         mProgress = 1.0f;
+        mMode = Mode.MODE_LINES;
 
     }
 
@@ -82,10 +95,14 @@ public class BoxView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawPath(mLineLeft.getPath(), mLineLeft.getPaint());
-        canvas.drawPath(mLineTop.getPath(), mLineTop.getPaint());
-        canvas.drawPath(mLineRight.getPath(), mLineRight.getPaint());
-        canvas.drawPath(mLineBottom.getPath(), mLineBottom.getPaint());
+        if (mMode == Mode.MODE_LINES) {
+            canvas.drawPath(mLineLeft.getPath(), mLineLeft.getPaint());
+            canvas.drawPath(mLineTop.getPath(), mLineTop.getPaint());
+            canvas.drawPath(mLineRight.getPath(), mLineRight.getPaint());
+            canvas.drawPath(mLineBottom.getPath(), mLineBottom.getPaint());
+        } else if (mMode == Mode.MODE_BOX) {
+            canvas.drawRect(mRectangle.getRectangle(), mRectangle.getPaint());
+        }
     }
 
     private void updatePaths() {
@@ -95,6 +112,8 @@ public class BoxView extends View {
         mLineTop.setEndPoints(bound.left, bound.top, bound.right, bound.top);
         mLineRight.setEndPoints(bound.right, bound.top, bound.right, bound.bottom);
         mLineBottom.setEndPoints(bound.left, bound.bottom, bound.right, bound.bottom);
+
+        mRectangle.loadRect(bound);
     }
 
 
@@ -106,6 +125,10 @@ public class BoxView extends View {
 
     public void setRectSource(AnimTextView source) {
         mViewToCover = source;
+    }
+
+    public void setMode(Mode mode) {
+        mMode = mode;
     }
 
     public float getProgress() {
@@ -126,6 +149,10 @@ public class BoxView extends View {
 
     public Line getLineBottom() {
         return mLineBottom;
+    }
+
+    public Rectangle getRectangle() {
+        return mRectangle;
     }
 
 
@@ -209,5 +236,59 @@ public class BoxView extends View {
             preparePath();
         }
 
+    }
+
+    class Rectangle {
+
+        static final int MODE_STROKE = 1;
+        static final int MODE_FILL = 2;
+        static final int MODE_FILL_STROKE = 3;
+
+        private RectF mRectangle;
+        private Paint mPaint;
+        private int mMode;
+        {
+            mRectangle = new RectF();
+            mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+            mPaint.setColor(Color.BLACK);
+            mPaint.setStrokeJoin(Paint.Join.ROUND);
+            mMode = MODE_FILL_STROKE;
+        }
+
+        Rectangle(int mode) {
+            setMode(mode);
+        }
+
+        public void loadRect(RectF rect) {
+            mRectangle.set(rect);
+        }
+
+        public void setColor(int color) {
+            mPaint.setColor(color);
+        }
+
+        public void setMode(int mode) {
+            mMode = mode;
+            if (mMode == MODE_FILL) {
+                mPaint.setStyle(Paint.Style.FILL);
+            } else if (mMode == MODE_STROKE){
+                mPaint.setStyle(Paint.Style.STROKE);
+            } else {
+                mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+            }
+        }
+
+        public void setStrockWidth(float width) {
+            mPaint.setStrokeWidth(width);
+        }
+
+        public RectF getRectangle() {
+            return mRectangle;
+        }
+
+        public Paint getPaint() {
+            return mPaint;
+        }
     }
 }
