@@ -89,7 +89,7 @@ public class BoxTextView extends FrameLayout {
             mTextView.setTextAlignment(TEXT_ALIGNMENT_CENTER);
         }
         mTextView.setBackgroundColor(Color.TRANSPARENT);
-        mTextView.setMode(AnimTextView.Mode.L);
+        mTextView.setAnimationType(AnimTextView.AnimationType.L);
         mTextView.setText(" ORNATE ");
         mTextView.setTextAppearance(mContext, R.style.main_title_left);
 

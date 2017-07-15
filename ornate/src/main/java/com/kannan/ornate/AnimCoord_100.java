@@ -34,7 +34,7 @@ public class AnimCoord_100 implements AnimationCoordinator {
 //            mBoxView.getLineBottom().setThickness(mLineWidth);
             mBoxView.getLineBottom().setThickness(mLineWidth * normalize(progress, 0.0f, 0.025f));
             mBoxView.getLineBottom().setPivotRatio(0.5f);
-            mTextView.setMode(AnimTextView.Mode.J);
+            mTextView.setAnimationType(AnimTextView.AnimationType.REVEAL_CENTER_HORIZONTAL);
             mTextView.setProgress(0.0f);
         } else if (progress <= 0.1f) {
             mBoxView.getLineLeft().setScale(0.0f);
@@ -63,7 +63,7 @@ public class AnimCoord_100 implements AnimationCoordinator {
             mBoxView.getLineRight().setThickness(mLineWidth);
             mBoxView.getLineTop().setScale(0.0f);
             mBoxView.getLineBottom().setScale(0.0f);
-            mTextView.setMode(AnimTextView.Mode.I);
+            mTextView.setAnimationType(AnimTextView.AnimationType.REVEAL_CENTER_VERTICAL);
             mTextView.setProgress(1 - normalize(progress, 0.9f, 0.975f));
         } else if(progress <= 1.0f) {
 //            mBoxView.getLineLeft().setScale(0.0f);

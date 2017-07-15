@@ -7,12 +7,14 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
-import android.graphics.Rect;
+import android.graphics.PointF;
 import android.graphics.RectF;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by kannan on 12/7/17.
@@ -21,12 +23,12 @@ import android.view.View;
 public class BoxView extends View {
 
 
-    private Line mLineLeft;
-    private Line mLineTop;
-    private Line mLineRight;
-    private Line mLineBottom;
+    private CompositeLine mCompositeLineLeft;
+    private CompositeLine mCompositeLineTop;
+    private CompositeLine mCompositeLineRight;
+    private CompositeLine mCompositeLineBottom;
 
-    private Rectangle mRectangle;
+    private Shape mRectangle;
 
     private boolean mShowLineLeft;
     private boolean mShowLineTop;
@@ -62,12 +64,12 @@ public class BoxView extends View {
 
     private void init() {
 
-        mLineLeft = new Line(Line.ORIENT_VERTICAL);
-        mLineTop = new Line(Line.ORIENT_HORIZONTAL);
-        mLineRight = new Line(Line.ORIENT_VERTICAL);
-        mLineBottom = new Line(Line.ORIENT_HORIZONTAL);
+        mCompositeLineLeft = new CompositeLine(CompositeLine.ORIENT_VERTICAL);
+        mCompositeLineTop = new CompositeLine(CompositeLine.ORIENT_HORIZONTAL);
+        mCompositeLineRight = new CompositeLine(CompositeLine.ORIENT_VERTICAL);
+        mCompositeLineBottom = new CompositeLine(CompositeLine.ORIENT_HORIZONTAL);
 
-        mRectangle = new Rectangle(Rectangle.MODE_FILL_STROKE);
+        mRectangle = new Shape(Shape.STYLE_FILL_STROKE);
 
 //        mShowLineLeft = true;
 //        mShowLineTop = true;
@@ -95,25 +97,42 @@ public class BoxView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        float offsetX = mViewToCover.getX();
+        float offsetY = mViewToCover.getY();
         if (mMode == Mode.MODE_LINES) {
-            canvas.drawPath(mLineLeft.getPath(), mLineLeft.getPaint());
-            canvas.drawPath(mLineTop.getPath(), mLineTop.getPaint());
-            canvas.drawPath(mLineRight.getPath(), mLineRight.getPaint());
-            canvas.drawPath(mLineBottom.getPath(), mLineBottom.getPaint());
+            canvas.drawPath(mCompositeLineLeft.getPathOffset(offsetX, offsetY), mCompositeLineLeft.getPaint());
+//            Path p = mViewToCover.pathLeft;
+//            p.offset(mViewToCover.getX(), mViewToCover.getY());
+//            Path pp = mViewToCover.pathTop;
+//            pp.offset(mViewToCover.getX(), mViewToCover.getY());
+//            canvas.drawPath(p, mCompositeLineLeft.getPaint());
+            canvas.drawPath(mCompositeLineTop.getPathOffset(offsetX, offsetY), mCompositeLineTop.getPaint());
+//            canvas.drawPath(pp, mCompositeLineTop.getPaint());
+            canvas.drawPath(mCompositeLineRight.getPathOffset(offsetX, offsetY), mCompositeLineRight.getPaint());
+            canvas.drawPath(mCompositeLineBottom.getPathOffset(offsetX, offsetY), mCompositeLineBottom.getPaint());
         } else if (mMode == Mode.MODE_BOX) {
-            canvas.drawRect(mRectangle.getRectangle(), mRectangle.getPaint());
+            canvas.drawPath(mRectangle.getPathOffset(offsetX, offsetY), mRectangle.getPaint());
         }
     }
 
     private void updatePaths() {
-        RectF bound = mViewToCover.getBoundingRect();
-        bound.offset(mViewToCover.getX(), mViewToCover.getY());
-        mLineLeft.setEndPoints(bound.left, bound.top, bound.left, bound.bottom);
-        mLineTop.setEndPoints(bound.left, bound.top, bound.right, bound.top);
-        mLineRight.setEndPoints(bound.right, bound.top, bound.right, bound.bottom);
-        mLineBottom.setEndPoints(bound.left, bound.bottom, bound.right, bound.bottom);
+//        RectF bound = mViewToCover.getBoundingRect();
+//        bound.offset(mViewToCover.getX(), mViewToCover.getY());
+//        mCompositeLineLeft.setEndPoints(bound.left, bound.top, bound.left, bound.bottom);
+////        mCompositeLineLeft = mViewToCover.pathLeft;
+//        mCompositeLineTop.setEndPoints(bound.left, bound.top, bound.right, bound.top);
+//        mCompositeLineRight.setEndPoints(bound.right, bound.top, bound.right, bound.bottom);
+//        mCompositeLineBottom.setEndPoints(bound.left, bound.bottom, bound.right, bound.bottom);
 
-        mRectangle.loadRect(bound);
+        mCompositeLineLeft.setPoints(mViewToCover.boundaryLeft.getContolrPoints());
+        mCompositeLineTop.setPoints(mViewToCover.boundaryTop.getContolrPoints());
+        mCompositeLineRight.setPoints(mViewToCover.boundaryRight.getContolrPoints());
+        mCompositeLineBottom.setPoints(mViewToCover.boundaryBottom.getContolrPoints());
+
+        mRectangle.setPoints(mViewToCover.boundaryLeft.getContolrPoints());
+        mRectangle.addPoints(mViewToCover.boundaryTop.getContolrPoints());
+        mRectangle.addPoints(mViewToCover.boundaryRight.getContolrPoints());
+        mRectangle.addPoints(mViewToCover.boundaryBottom.getContolrPoints());
     }
 
 
@@ -135,29 +154,29 @@ public class BoxView extends View {
         return mProgress;
     }
 
-    public Line getLineLeft() {
-        return mLineLeft;
+    public CompositeLine getLineLeft() {
+        return mCompositeLineLeft;
     }
 
-    public Line getLineTop() {
-        return mLineTop;
+    public CompositeLine getLineTop() {
+        return mCompositeLineTop;
     }
 
-    public Line getLineRight() {
-        return mLineRight;
+    public CompositeLine getLineRight() {
+        return mCompositeLineRight;
     }
 
-    public Line getLineBottom() {
-        return mLineBottom;
+    public CompositeLine getLineBottom() {
+        return mCompositeLineBottom;
     }
 
-    public Rectangle getRectangle() {
+    public Shape getRectangle() {
         return mRectangle;
     }
 
 
 
-    class Line {
+    class CompositeLine {
 
         static final int ORIENT_HORIZONTAL = 1;
         static final int ORIENT_VERTICAL = 2;
@@ -168,9 +187,10 @@ public class BoxView extends View {
         float mScale;
         float mPivotRatio;
         int mOrientation;
-        float x1, x2, y1, y2;
+//        float x1, x2, y1, y2;
+        List<PointF> mPoints;
 
-        {
+        private void init() {
             mPath = new Path();
             mPathMeasure = new PathMeasure();
             mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -179,39 +199,61 @@ public class BoxView extends View {
             mPaint.setStrokeWidth(1f);
             mPaint.setStrokeCap(Paint.Cap.ROUND);
             mOrientation = ORIENT_HORIZONTAL;
-            x1 = x2 = y1 = y2 = 0;
+//            x1 = x2 = y1 = y2 = 0;
+            mPoints = new ArrayList<>();
+            mPivotRatio = 0.5f;
         }
 
-        Line(int orient) {
+        CompositeLine(int orient) {
+            init();
             mOrientation = orient;
         }
 
-        void setEndPoints(float x1, float y1, float x2, float y2) {
-            this.x1 = x1;
-            this.x2 = x2;
-            this.y1 = y1;
-            this.y2 = y2;
-            preparePath();
+//        void setEndPoints(float x1, float y1, float x2, float y2) {
+//            this.x1 = x1;
+//            this.x2 = x2;
+//            this.y1 = y1;
+//            this.y2 = y2;
+//            preparePath();
+//        }
+
+        void setPoints(List<PointF> points) {
+            mPoints = new ArrayList<>(points);
+        }
+
+        public void reset() {
+            init();
         }
 
         private void preparePath() {
             mPath.reset();
-            mPath.moveTo(x1, y1);
-            mPath.lineTo(x2, y2);
-            mPathMeasure = new PathMeasure(mPath, false);
-            float[] pivotPoints = new float[2];
-            mPathMeasure.getPosTan(mPathMeasure.getLength() * mPivotRatio, pivotPoints, null);
-            Matrix scaleMatrix = new Matrix();
-            if (mOrientation == ORIENT_HORIZONTAL) {
-                scaleMatrix.setScale(mScale, 1f, pivotPoints[0], pivotPoints[1]);
-            } else {
-                scaleMatrix.setScale(1f, mScale, pivotPoints[0], pivotPoints[1]);
+            if (!mPoints.isEmpty()) {
+                mPath.moveTo(mPoints.get(0).x, mPoints.get(0).y);
+                for (PointF point : mPoints) {
+                    mPath.lineTo(point.x, point.y);
+                }
+                mPathMeasure = new PathMeasure(mPath, false);
+                float[] pivotPoints = new float[2];
+                mPathMeasure.getPosTan(mPathMeasure.getLength() * mPivotRatio, pivotPoints, null);
+                Matrix scaleMatrix = new Matrix();
+                if (mOrientation == ORIENT_HORIZONTAL) {
+                    scaleMatrix.setScale(mScale, 1f, pivotPoints[0], pivotPoints[1]);
+                } else {
+                    scaleMatrix.setScale(1f, mScale, pivotPoints[0], pivotPoints[1]);
+                }
+                mPath.transform(scaleMatrix);
             }
-            mPath.transform(scaleMatrix);
         }
 
         Path getPath() {
+            preparePath();
             return mPath;
+        }
+
+        Path getPathOffset(float x, float y) {
+            Path p = getPath();
+            p.offset(x, y);
+            return p;
         }
 
         Paint getPaint() {
@@ -228,51 +270,100 @@ public class BoxView extends View {
 
         public void setScale(float scale) {
             mScale = scale;
-            preparePath();
+//            preparePath();
         }
 
         void setPivotRatio(float ratio) {
             mPivotRatio = ratio;
-            preparePath();
+//            preparePath();
         }
 
     }
 
-    class Rectangle {
+    class Shape {
 
-        static final int MODE_STROKE = 1;
-        static final int MODE_FILL = 2;
-        static final int MODE_FILL_STROKE = 3;
+        static final int STYLE_STROKE = 1;
+        static final int STYLE_FILL = 2;
+        static final int STYLE_FILL_STROKE = 3;
 
-        private RectF mRectangle;
+        private List<PointF> mControlPoints;
         private Paint mPaint;
-        private int mMode;
-        {
-            mRectangle = new RectF();
+        private Path mPath;
+        private int mStyle;
+        private float mScaleX;
+        private float mScaleY;
+        private float mPivotRatioX;
+        private float mPivotRatioY;
+
+        private void init() {
+            mControlPoints = new ArrayList<>();
+            mStyle = STYLE_FILL_STROKE;
             mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
             mPaint.setColor(Color.BLACK);
             mPaint.setStrokeJoin(Paint.Join.ROUND);
-            mMode = MODE_FILL_STROKE;
+            mPath = new Path();
+            mScaleX = 1.0f;
+            mScaleY = 1.0f;
+            mPivotRatioX = 0.5f;
+            mPivotRatioY = 0.5f;
         }
 
-        Rectangle(int mode) {
-            setMode(mode);
+        Shape(int style) {
+            init();
+            setStyle(style);
         }
 
-        public void loadRect(RectF rect) {
-            mRectangle.set(rect);
+        public void preparePath() {
+            mPath.reset();
+            if (!mControlPoints.isEmpty()) {
+                mPath.moveTo(mControlPoints.get(0).x, mControlPoints.get(0).y);
+                for (PointF point : mControlPoints) {
+                    mPath.lineTo(point.x, point.y);
+                }
+                mPath.close();
+                RectF bound = new RectF();
+                mPath.computeBounds(bound, true);
+                Matrix scaleMatrix = new Matrix();
+                scaleMatrix.setScale(mScaleX, mScaleY,
+                        bound.left + bound.width() * mPivotRatioX,
+                        bound.top + bound.height() * mPivotRatioY);
+                mPath.transform(scaleMatrix);
+            }
+        }
+
+        public void setPoints(List<PointF> points) {
+            mControlPoints = new ArrayList<>(points);
+        }
+
+        public void addPoints(List<PointF> points) {
+            mControlPoints.addAll(points);
+        }
+
+        public void reset() {
+            init();
+        }
+
+        public Path getPath() {
+            preparePath();
+            return mPath;
+        }
+
+        public Path getPathOffset(float dx, float dy) {
+            Path p = getPath();
+            p.offset(dx, dy);
+            return p;
         }
 
         public void setColor(int color) {
             mPaint.setColor(color);
         }
 
-        public void setMode(int mode) {
-            mMode = mode;
-            if (mMode == MODE_FILL) {
+        public void setStyle(int style) {
+            mStyle = style;
+            if (mStyle == STYLE_FILL) {
                 mPaint.setStyle(Paint.Style.FILL);
-            } else if (mMode == MODE_STROKE){
+            } else if (mStyle == STYLE_STROKE){
                 mPaint.setStyle(Paint.Style.STROKE);
             } else {
                 mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -281,10 +372,6 @@ public class BoxView extends View {
 
         public void setStrockWidth(float width) {
             mPaint.setStrokeWidth(width);
-        }
-
-        public RectF getRectangle() {
-            return mRectangle;
         }
 
         public Paint getPaint() {

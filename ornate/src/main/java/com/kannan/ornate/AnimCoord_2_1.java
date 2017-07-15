@@ -33,7 +33,7 @@ public class AnimCoord_2_1 implements AnimationCoordinator {
 //            mBoxView.getLineBottom().setScale(normalize(progress, 0.0f, 0.025f));
 //            mBoxView.getLineBottom().setThickness(mLineWidth * normalize(progress, 0.0f, 0.025f));
 //            mBoxView.getLineBottom().setPivotRatio(0.5f);
-//            mTextView.setMode(AnimTextView.Mode.C);
+//            mTextView.setAnimationType(AnimTextView.AnimationType.REVEAL_DOWN);
 //            mTextView.setProgress(0.0f);
 //        } else if (progress <= 0.1f) {
 //            mBoxView.getLineBottom().setScale(1.0f);
@@ -45,16 +45,16 @@ public class AnimCoord_2_1 implements AnimationCoordinator {
 //            mTextView.setProgress(1 - normalize(progress, 0.9f, 0.975f));
 //        } else
             if (progress <= 0.5f) {
-                mTextView.setMode(AnimTextView.Mode.A);
+                mTextView.setAnimationType(AnimTextView.AnimationType.REVEAL_RIGHT);
                 mTextView.setTextColor(Color.BLACK);
                 mTextView.setProgress(normalize(progress, 0.0f, 0.5f));
                 mTextView.bringToFront();
                 mBoxView.setMode(BoxView.Mode.MODE_BOX);
-                mBoxView.getRectangle().setMode(BoxView.Rectangle.MODE_FILL_STROKE);
+                mBoxView.getRectangle().setStyle(BoxView.Shape.STYLE_FILL_STROKE);
                 mBoxView.getRectangle().setStrockWidth(10f);
                 mBoxView.getRectangle().setColor(Color.YELLOW);
             } else {
-                mTextView.setMode(AnimTextView.Mode.B);
+                mTextView.setAnimationType(AnimTextView.AnimationType.REVEAL_LEFT);
                 mTextView.setProgress(1 - normalize(progress, 0.5f, 1.0f));
 
         }

@@ -1,10 +1,7 @@
 package com.kannan.anim;
 
-import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.kannan.ornate.AnimCoord_1;
@@ -24,7 +21,6 @@ import com.kannan.ornate.AnimCoord_7;
 import com.kannan.ornate.AnimCoord_8;
 import com.kannan.ornate.AnimCoord_9;
 import com.kannan.ornate.AnimTextView;
-import com.kannan.ornate.AnimationCoordinator;
 import com.kannan.ornate.BoxTextView;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorSet;
@@ -33,8 +29,6 @@ import com.nineoldandroids.animation.ObjectAnimator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static android.view.View.TEXT_ALIGNMENT_CENTER;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,20 +41,20 @@ public class MainActivity extends AppCompatActivity {
         show();
     }
 
-    List<AnimTextView.Mode> modes = Arrays.asList(
-            AnimTextView.Mode.A,
-            AnimTextView.Mode.B,
-            AnimTextView.Mode.C,
-            AnimTextView.Mode.D,
-            AnimTextView.Mode.E,
-            AnimTextView.Mode.F,
-            AnimTextView.Mode.G,
-            AnimTextView.Mode.H,
-            AnimTextView.Mode.I,
-            AnimTextView.Mode.J,
-            AnimTextView.Mode.K,
-            AnimTextView.Mode.L,
-            AnimTextView.Mode.M
+    List<AnimTextView.AnimationType> animationTypes = Arrays.asList(
+            AnimTextView.AnimationType.REVEAL_RIGHT,
+            AnimTextView.AnimationType.REVEAL_LEFT,
+            AnimTextView.AnimationType.REVEAL_DOWN,
+            AnimTextView.AnimationType.REVEAL_UP,
+            AnimTextView.AnimationType.E,
+            AnimTextView.AnimationType.F,
+            AnimTextView.AnimationType.G,
+            AnimTextView.AnimationType.H,
+            AnimTextView.AnimationType.REVEAL_CENTER_VERTICAL,
+            AnimTextView.AnimationType.REVEAL_CENTER_HORIZONTAL,
+            AnimTextView.AnimationType.K,
+            AnimTextView.AnimationType.L,
+            AnimTextView.AnimationType.M
     );
 
 
@@ -68,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private void show() {
         AnimatorSet animSet = new AnimatorSet();
         List<Animator> al = new ArrayList<>();
-//        for (AnimTextView.Mode mode : modes) {
+//        for (AnimTextView.AnimationType mode : animationTypes) {
 //            AnimTextView v = new AnimTextView(getApplicationContext());
 //            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
 //                    ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -81,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
 //                v.setTextAlignment(TEXT_ALIGNMENT_CENTER);
 //            }
 //            v.setTextAppearance(getApplicationContext(), R.style.main_title_left);
-//            v.setMode(mode);
+//            v.setAnimationType(mode);
 //            v.setProgress(0.0f);
 //            al.add(
 //                    ObjectAnimator.ofFloat(v, "progress", 0.0f, 1.0f).setDuration(1000)

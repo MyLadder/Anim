@@ -31,7 +31,7 @@ public class AnimCoord_4 implements AnimationCoordinator {
             mBoxView.getLineRight().setScale(normalize(progress, 0.0f, 0.025f));
             mBoxView.getLineRight().setThickness(mLineWidth * normalize(progress, 0.0f, 0.025f));
             mBoxView.getLineRight().setPivotRatio(0.5f);
-            mTextView.setMode(AnimTextView.Mode.A);
+            mTextView.setAnimationType(AnimTextView.AnimationType.REVEAL_RIGHT);
             mTextView.setProgress(0.0f);
         } else if (progress <= 0.1f) {
             mBoxView.getLineRight().setScale(1.0f);
