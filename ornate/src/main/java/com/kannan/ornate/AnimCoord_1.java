@@ -12,9 +12,9 @@ import java.util.List;
 
 public class AnimCoord_1 extends AnimationEffect {
 
+
     public AnimCoord_1(AnimTextView textView, BoxView boxView, float lineWidth) {
         super(textView,boxView, lineWidth);
-
     }
 
     @Override

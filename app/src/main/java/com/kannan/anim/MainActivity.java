@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
             atv.setAnimCooard(new AnimCoord_2_1(atv.getTextView(), atv.getBoxView(), atv.getLineWidth()));
             root.addView(atv);
             al.add(
-                    ObjectAnimator.ofFloat(atv, "progress", 0.0f, 1.0f).setDuration(5000)
+                    ObjectAnimator.ofFloat(atv, "progress", 0.0f, 1.0f).setDuration(10000)
             );
         }
         {

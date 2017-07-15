@@ -30,7 +30,7 @@ abstract public class AnimationEffect {
             }
         }
 //        mTextView.setProgress(progress);
-        mBoxView.setProgress(progress);
+        mBoxView.update();
     }
 
     public AnimTextView getTextView() {

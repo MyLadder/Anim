@@ -96,11 +96,11 @@ public class BoxTextView extends FrameLayout {
 
         this.addView(mBoxView);
         this.addView(mTextView);
-        mBoxView.bringToFront();
+//        mBoxView.bringToFront();
 
         mBoxView.setRectSource(mTextView);
         mAnimCoord = new AnimCoord_14(mTextView, mBoxView, mLineWidth);
-        effect = new AnimCoord_1(mTextView, mBoxView, mLineWidth);
+        effect = new Effect_1(mTextView, mBoxView, mLineWidth);
 
     }
 

@@ -135,6 +135,11 @@ public class BoxView extends View {
         mRectangle.addPoints(mViewToCover.boundaryBottom.getContolrPoints());
     }
 
+    public void update() {
+        updatePaths();
+        invalidate();
+    }
+
 
     public void setProgress(float progress) {
         mProgress = progress;

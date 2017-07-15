@@ -3,6 +3,7 @@ package com.kannan.ornate;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Rect;
@@ -51,6 +52,11 @@ public class AnimTextView extends TextView {
     private int width = -1;
     private int height = -1;
 
+    private int mColor1 = Color.WHITE;
+    private int mColor2 = Color.BLACK;
+
+    private boolean doubleLayer = false;
+
     public AnimTextView(Context context) {
         super(context);
         init();
@@ -95,6 +101,16 @@ public class AnimTextView extends TextView {
 
     @Override
     protected void onDraw(Canvas canvas) {
+
+        setTextColor(Color.WHITE);
+        if (doubleLayer) {
+//            getPaint().setColor(Color.BLACK);
+            super.onDraw(canvas);
+            setTextColor(Color.BLACK);
+
+        }
+//        getPaint().setColor(Color.BLACK);
+//        setTextColor(Color.BLACK);
         try {
             maskPath.reset();
             maskPath.moveTo(boundaryLeft.getContolrPoints().get(0).x, boundaryLeft.getContolrPoints().get(0).y);
@@ -158,7 +174,7 @@ public class AnimTextView extends TextView {
                 pathBottom.lineTo(width * mProgress, height);
 
                 boundaryLeft.addControlPoint(0, height);
-                boundaryLeft.addControlPoint(30, height / 2);
+//                boundaryLeft.addControlPoint(30, height / 2);
                 boundaryLeft.addControlPoint(0, 0);
                 boundaryTop.addControlPoint(0, 0);
                 boundaryTop.addControlPoint(width * mProgress, 0);
@@ -188,7 +204,7 @@ public class AnimTextView extends TextView {
 
 
                 boundaryLeft.addControlPoint(width - (width * mProgress), height);
-                boundaryLeft.addControlPoint(width - (width * mProgress) + 30, height / 2);
+//                boundaryLeft.addControlPoint(width - (width * mProgress), height / 2);
                 boundaryLeft.addControlPoint(width - (width * mProgress), 0);
                 boundaryTop.addControlPoint(width - (width * mProgress), 0);
                 boundaryTop.addControlPoint(width, 0);
@@ -396,6 +412,10 @@ public class AnimTextView extends TextView {
 
     public float getProgress() {
         return mProgress;
+    }
+
+    public void setDoubleLayer(boolean flag) {
+        doubleLayer = flag;
     }
 
     class Boundary {
