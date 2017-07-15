@@ -31,6 +31,7 @@ public class BoxTextView extends FrameLayout {
 
     private AnimationCoordinator mAnimCoord;
 
+    private AnimationEffect effect;
 
     public BoxTextView(Context context) {
         super(context);
@@ -99,6 +100,7 @@ public class BoxTextView extends FrameLayout {
 
         mBoxView.setRectSource(mTextView);
         mAnimCoord = new AnimCoord_14(mTextView, mBoxView, mLineWidth);
+        effect = new AnimCoord_1(mTextView, mBoxView, mLineWidth);
 
     }
 
@@ -129,7 +131,8 @@ public class BoxTextView extends FrameLayout {
 
     public void setProgress(float progress) {
         mProgress = progress;
-        mAnimCoord.animate(progress);
+//        mAnimCoord.animate(progress);
+        effect.update(progress);
 
     }
 
