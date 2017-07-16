@@ -76,7 +76,7 @@ public class BoxTextView extends FrameLayout {
 
         mTextView = new AnimTextView(mContext);
         LayoutParams textLP = new LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
         );
 //        textLP.addRule(ALIGN_PARENT_LEFT, TRUE);
@@ -91,7 +91,7 @@ public class BoxTextView extends FrameLayout {
         }
         mTextView.setBackgroundColor(Color.TRANSPARENT);
         mTextView.setAnimationType(AnimTextView.AnimationType.L);
-        mTextView.setText(" ORNATE ");
+        mTextView.setText("ORNATE");
         mTextView.setTextAppearance(mContext, R.style.main_title_left);
 
         this.addView(mBoxView);
@@ -100,7 +100,7 @@ public class BoxTextView extends FrameLayout {
 
         mBoxView.setRectSource(mTextView);
         mAnimCoord = new AnimCoord_14(mTextView, mBoxView, mLineWidth);
-        effect = new Effect_1(mTextView, mBoxView, mLineWidth);
+        effect = new Effect_2(mTextView, mBoxView, mLineWidth);
 
     }
 
@@ -114,6 +114,9 @@ public class BoxTextView extends FrameLayout {
         int textWidthMeasureSpec = MeasureSpec.makeMeasureSpec(widthSpecSize, MeasureSpec.UNSPECIFIED);
         int textHeightMeasureSpec = MeasureSpec.makeMeasureSpec(heightSpecSize, MeasureSpec.UNSPECIFIED);
         measureChild(mTextView, textWidthMeasureSpec, textHeightMeasureSpec);
+        measureChild(mTextView,
+                MeasureSpec.makeMeasureSpec(mTextView.getMeasuredWidth() + 80, MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(mTextView.getMeasuredHeight(), MeasureSpec.EXACTLY));
 
         int requiredWidth = mTextView.getMeasuredWidth() + getPaddingLeft() + getPaddingRight() + 2 * mTextMargin;
         int requiredHeight = mTextView.getMeasuredHeight() + getPaddingTop() + getPaddingBottom() + 2 * mTextMargin;
