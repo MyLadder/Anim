@@ -25,7 +25,7 @@ abstract public class AnimationStage {
     abstract protected void init();
 
     public boolean needToUpdate(float progress) {
-        return FROM_PROGRESS <= progress && progress <= TO_PROGRESS;
+        return FROM_PROGRESS <= progress && progress < TO_PROGRESS;
     }
 
     public void update(float progress) {

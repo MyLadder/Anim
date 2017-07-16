@@ -40,7 +40,8 @@ public class AnimTextView extends TextView {
         K,
         L,
         M,
-        N;
+        REVEAL_CENTER_VERTICAL_ARROW_INSIDE,
+        REVEAL_CENTER_VERTICAL_ARROW_OUTSIDE;
 
     }
 
@@ -378,6 +379,20 @@ public class AnimTextView extends TextView {
                 maskPath.lineTo((width / 2) - (width * mProgress / 2), (height / 2) + (height * mProgress / 2));
                 maskPath.close();
                 break;
+            case REVEAL_CENTER_VERTICAL_ARROW_INSIDE:
+                float arrowWidth = Math.min(
+                        width * mProgress, height / 2
+                );
+                boundaryLeft.addControlPoint((width / 2) - (width * mProgress / 2), height);
+                boundaryLeft.addControlPoint((width / 2) - (width * mProgress / 2) + (arrowWidth / 2) * mProgress, height / 2);
+                boundaryLeft.addControlPoint((width / 2) - (width * mProgress / 2), 0);
+                boundaryTop.addControlPoint((width / 2) - (width * mProgress / 2), 0);
+                boundaryTop.addControlPoint((width / 2) + (width * mProgress / 2), 0);
+                boundaryRight.addControlPoint((width / 2) + (width * mProgress / 2), 0);
+                boundaryRight.addControlPoint((width / 2) + (width * mProgress / 2) - (arrowWidth / 2) * mProgress, height / 2);
+                boundaryRight.addControlPoint((width / 2) + (width * mProgress / 2), height);
+                boundaryBottom.addControlPoint((width / 2) + (width * mProgress / 2), height);
+                boundaryBottom.addControlPoint((width / 2) - (width * mProgress / 2), height);
 
         }
 
