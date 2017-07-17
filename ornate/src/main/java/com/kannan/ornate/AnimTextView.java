@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.text.Layout;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,6 +57,7 @@ public class AnimTextView extends TextView {
     private float mProgress;
     private int width = -1;
     private int height = -1;
+    private float maskLeft, maskTop, maskWidth, maskHeight;
 
     private int mColor1 = Color.WHITE;
     private int mColor2 = Color.BLACK;
@@ -91,6 +93,8 @@ public class AnimTextView extends TextView {
         boundaryRight = new Boundary();
         boundaryBottom = new Boundary();
         mProgress = 1.0f;
+        setGravity(Gravity.CENTER);
+        setTextAlignment(TEXT_ALIGNMENT_GRAVITY);
 
     }
 
@@ -103,6 +107,39 @@ public class AnimTextView extends TextView {
 
 //        width += getPaint().getFontMetrics().descent;
 //        setMeasuredDimension(width, height);
+
+
+        Layout layout = this.getLayout();
+        int lineStart = layout.getLineStart(0);
+        int lineEnd = layout.getLineEnd(0);
+        float lineLeft = layout.getLineLeft(0);
+        float lineBaseline = layout.getLineBaseline(0);
+        String lineText = getText().subSequence(lineStart, lineEnd).toString();
+//            canvas.drawText(String.valueOf(lineText), lineLeft, lineBaseline, getPaint());
+        Paint.FontMetrics fm = getPaint().getFontMetrics();
+//        Toast.makeText(getContext(), , Toast.LENGTH_SHORT).show();
+//        layout.getLineBounds(0, r);
+//        Log.i("app", "" + r.top + " " + r. left + " " + r.right + " " + r.bottom + " " + r.width() + " " + r. height());
+        Log.i("app", "" + layout.getLineBaseline(0) + " " + layout.getLineTop(0));
+
+        getPaint().getTextBounds(lineText.toUpperCase(), 0, lineText.length(), r);
+        Log.i("app", "" + r.top + " " + r. left + " " + r.right + " " + r.bottom + " " + r.width() + " " + r. height());
+        Log.i("app", "" + fm.top + " " + fm.ascent + " " + fm.descent + " " + fm.bottom + " " + fm.leading );
+//        getPaint().getText
+
+        float hdiff = height - r.height()-1;
+        maskLeft = 0;
+//        maskTop = r.top + hdiff / 2;
+//        maskWidth = width;
+//        maskHeight = r.height() - 1 + hdiff / 2;
+
+        maskWidth = width;
+        maskHeight = r.height();
+        maskHeight = layout.getLineBaseline(0) - layout.getLineTop(0);
+
+//        maskTop = (height - maskHeight+4) / 2;
+        maskTop = layout.getLineBottom(0) - maskHeight;
+
     }
 
     @Override
@@ -125,7 +162,10 @@ public class AnimTextView extends TextView {
             boundaryRight.drawOnPath(maskPath);
             boundaryBottom.drawOnPath(maskPath);
             maskPath.close();
-            maskPath.offset(r.left, -r.top/2);
+            maskPath.offset(0, maskTop);
+            Paint p = new Paint();
+            p.setColor(Color.GREEN);
+            canvas.drawPath(maskPath, p);
             canvas.clipPath(maskPath);
         } catch (Exception e ){}
 //        canvas.clipPath(pathLeft, Region.Op.UNION);
@@ -152,23 +192,9 @@ public class AnimTextView extends TextView {
 
 
     private void updateMask() {
-        Layout layout = this.getLayout();
-            int lineStart = layout.getLineStart(0);
-            int lineEnd = layout.getLineEnd(0);
-            float lineLeft = layout.getLineLeft(0);
-            float lineBaseline = layout.getLineBaseline(0);
-            String lineText = getText().subSequence(lineStart, lineEnd).toString();
-//            canvas.drawText(String.valueOf(lineText), lineLeft, lineBaseline, getPaint());
-        Paint.FontMetrics fm = getPaint().getFontMetrics();
-//        Toast.makeText(getContext(), , Toast.LENGTH_SHORT).show();
-        getPaint().getTextBounds(lineText, 0, lineText.length(), r);
-        Log.i("app", "" + r.top + " " + r. left + " " + r.right + " " + r.bottom + " " + r.width() + " " + r. height());
-        Log.i("app", "" + fm.top + " " + fm.ascent + " " + fm.descent + " " + fm.bottom + " " + fm.leading);
-//        getPaint().getText
-
         float t = r.top;
-        float l = r.left;
-        float w = r.width();
+        float l = 0; //layout.getLineLeft(0); //r.left;
+        float w = width;    //r.width();
         float h = r.height();
 
         pathLeft.reset();
@@ -408,7 +434,7 @@ public class AnimTextView extends TextView {
                 break;
             case REVEAL_CENTER_VERTICAL_ARROW_INSIDE:
                 float arrowWidth = Math.min(
-                        w * mProgress, 70
+                        40 * mProgress, 857698457
                 );
 //                boundaryLeft.addControlPoint((width / 2) - (width * mProgress / 2) - (arrowWidth / 2), height);
 //                boundaryLeft.addControlPoint((width / 2) - (width * mProgress / 2), height / 2);
@@ -421,16 +447,16 @@ public class AnimTextView extends TextView {
 //                boundaryBottom.addControlPoint((width / 2) + (width * mProgress / 2), height);
 //                boundaryBottom.addControlPoint((width / 2) - (width * mProgress / 2), height);
 
-                boundaryLeft.addControlPoint((w / 2) - (w * mProgress / 2) - (arrowWidth / 2), h);
-                boundaryLeft.addControlPoint((w / 2) - (w * mProgress / 2), h / 2);
-                boundaryLeft.addControlPoint((w / 2) - (w * mProgress / 2) - (arrowWidth / 2), 0);
-                boundaryTop.addControlPoint((w / 2) - (w * mProgress / 2), 0);
-                boundaryTop.addControlPoint((w / 2) + (w * mProgress / 2), 0);
-                boundaryRight.addControlPoint((w / 2) + (w * mProgress / 2) + (arrowWidth / 2), 0);
-                boundaryRight.addControlPoint((w / 2) + (w * mProgress / 2), h / 2);
-                boundaryRight.addControlPoint((w / 2) + (w * mProgress / 2) + (arrowWidth / 2), h);
-                boundaryBottom.addControlPoint((w / 2) + (w * mProgress / 2), h);
-                boundaryBottom.addControlPoint((w / 2) - (w * mProgress / 2), h);
+                boundaryLeft.addControlPoint((maskWidth / 2) - (maskWidth * mProgress / 2), maskHeight);
+                boundaryLeft.addControlPoint((maskWidth / 2) - (maskWidth * mProgress / 2) + (arrowWidth / 2), maskHeight / 2);
+                boundaryLeft.addControlPoint((maskWidth / 2) - (maskWidth * mProgress / 2), 0);
+                boundaryTop.addControlPoint((maskWidth / 2) - (maskWidth * mProgress / 2), 0);
+                boundaryTop.addControlPoint((maskWidth/ 2) + (maskWidth * mProgress / 2), 0);
+                boundaryRight.addControlPoint((maskWidth / 2) + (maskWidth * mProgress / 2), 0);
+                boundaryRight.addControlPoint((maskWidth / 2) + (maskWidth * mProgress / 2) - (arrowWidth / 2), maskHeight / 2);
+                boundaryRight.addControlPoint((maskWidth / 2) + (maskWidth * mProgress / 2), maskHeight);
+                boundaryBottom.addControlPoint((maskWidth / 2) + (maskWidth * mProgress / 2), maskHeight);
+                boundaryBottom.addControlPoint((maskWidth / 2) - (maskWidth * mProgress / 2), maskHeight);
 
         }
 

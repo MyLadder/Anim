@@ -91,7 +91,7 @@ public class BoxTextView extends FrameLayout {
         }
         mTextView.setBackgroundColor(Color.TRANSPARENT);
         mTextView.setAnimationType(AnimTextView.AnimationType.L);
-        mTextView.setText("ORNATE");
+        mTextView.setText("ORNATE");    //.setText("aojkiljpgtyoe");
         mTextView.setTextAppearance(mContext, R.style.main_title_left);
 
         this.addView(mBoxView);
@@ -115,6 +115,7 @@ public class BoxTextView extends FrameLayout {
         int textHeightMeasureSpec = MeasureSpec.makeMeasureSpec(heightSpecSize, MeasureSpec.UNSPECIFIED);
         measureChild(mTextView, textWidthMeasureSpec, textHeightMeasureSpec);
         measureChild(mTextView,
+                // move to AnimTextView
                 MeasureSpec.makeMeasureSpec(mTextView.getMeasuredWidth() + 80, MeasureSpec.EXACTLY),
                 MeasureSpec.makeMeasureSpec(mTextView.getMeasuredHeight(), MeasureSpec.EXACTLY));
 
